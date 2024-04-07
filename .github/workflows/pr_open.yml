@@ -1,0 +1,30 @@
+name: PR Open CI
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  pr-open:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Get Repository Codes
+        uses: actions/checkout@v4
+
+      - name: add-pr-labeler
+        uses: TimonVS/pr-labeler-action@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/pr-labeler.yml
+
+      - name: add-pr-reviewer
+        uses: uesteibar/reviewer-lottery@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: add-pr-assignee
+        uses: danielswensson/auto-assign-owner-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

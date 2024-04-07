@@ -1,0 +1,7 @@
+groups:
+  - name: collaborator
+    reviewer: 1
+    internal_reviewers: 1
+    usernames:
+      - Nevation
+      - wlsrn3684
