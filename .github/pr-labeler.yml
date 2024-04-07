@@ -1,0 +1,5 @@
+feat: ["feat/*"]
+fix: ["fix/*"]
+doc: ["doc/*", "docs/*"]
+bug: ["bug/*"]
+chore: ["chore/*"]
