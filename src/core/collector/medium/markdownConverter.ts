@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import type { MediumPost, MediumPostParagraph, MediumPostParagraphMarkup } from './medium.type';
 
+@Injectable()
 export class MarkdownConverter {
-  static convertToMarkdown(post: MediumPost): string {
+  public convertToMarkdown(post: MediumPost): string {
     let markdown = `# ${post.title}\n\n`;
 
     if (post.description) {
@@ -16,7 +18,7 @@ export class MarkdownConverter {
     return markdown;
   }
 
-  private static paragraphToMarkdown(paragraph: MediumPostParagraph): string {
+  private paragraphToMarkdown(paragraph: MediumPostParagraph): string {
     switch (paragraph.type) {
       case 'H3':
         return `### ${paragraph.text}\n\n`;
@@ -45,11 +47,11 @@ export class MarkdownConverter {
     }
   }
 
-  private static imageToMarkdown(id: string): string {
+  private imageToMarkdown(id: string): string {
     return id ? `![image](https://miro.medium.com/v2/resize:fit:1000/${id})\n\n` : '';
   }
 
-  private static embedToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
+  private embedToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
     let embedText = text.replace(/\n/g, '');
     markups
       .slice()
@@ -62,7 +64,7 @@ export class MarkdownConverter {
     return `${embedText}\n\n`;
   }
 
-  private static textToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
+  private textToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
     markups
       .slice()
       .reverse()
@@ -76,15 +78,15 @@ export class MarkdownConverter {
     return `${text}\n\n`;
   }
 
-  private static codeToMarkdown(text: string, language: string = ''): string {
+  private codeToMarkdown(text: string, language: string = ''): string {
     return '```' + language + '\n' + text + '\n```\n\n';
   }
 
-  private static applyLink(text: string, href: string, start: number, end: number): string {
+  private applyLink(text: string, href: string, start: number, end: number): string {
     return `${text.substring(0, start)}[${text.substring(start, end)}](${href})${text.substring(end)}`;
   }
 
-  private static applyMarkup(text: string, markup): string {
+  private applyMarkup(text: string, markup): string {
     const markupTypes = {
       STRONG: '**', // 볼드 처리
       EM: '_', // 이탤릭 처리

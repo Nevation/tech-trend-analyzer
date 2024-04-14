@@ -6,7 +6,7 @@ import type { MediumGraphQLResponse, MediumPost } from './medium.type';
 import { MarkdownConverter } from './markdownConverter';
 import { plainToInstance } from 'class-transformer';
 import { FetchRequester } from 'src/utils/requester/fetch.requester';
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 
 export class CollectorMedium extends CollectorStrategy {
   private readonly queryFile = '/LegacyWebInlineTopicFeedQuery.gql';
@@ -19,7 +19,7 @@ export class CollectorMedium extends CollectorStrategy {
 
   private requester: FetchRequester;
 
-  constructor() {
+  constructor(@Inject('MarkdownConverter') private markdownConverter: MarkdownConverter) {
     super();
     this.query = this.loadGraphQLQuery();
     const requestHeader = {
@@ -70,7 +70,7 @@ export class CollectorMedium extends CollectorStrategy {
 
     return plainToInstance(CollectedPost, {
       postTitle: post.title,
-      postContent: MarkdownConverter.convertToMarkdown(post),
+      postContent: this.markdownConverter.convertToMarkdown(post),
       writer: `${this.getProvidor()}-${post.creator.name}`,
       likeCount: post.clapCount,
       postTags: post.tags.map((tag) => tag.normalizedTagSlug),
