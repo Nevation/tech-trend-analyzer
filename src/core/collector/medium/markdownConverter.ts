@@ -16,7 +16,7 @@ export class MarkdownConverter {
     return markdown;
   }
 
-  static paragraphToMarkdown(paragraph: MediumPostParagraph): string {
+  private static paragraphToMarkdown(paragraph: MediumPostParagraph): string {
     switch (paragraph.type) {
       case 'H3':
         return `### ${paragraph.text}\n\n`;
@@ -45,11 +45,11 @@ export class MarkdownConverter {
     }
   }
 
-  static imageToMarkdown(id: string): string {
+  private static imageToMarkdown(id: string): string {
     return id ? `![image](https://miro.medium.com/v2/resize:fit:1000/${id})\n\n` : '';
   }
 
-  static embedToMarkdown(text: string, markups: any[]): string {
+  private static embedToMarkdown(text: string, markups: any[]): string {
     let embedText = text.replace(/\n/g, '');
     markups
       .slice()
@@ -62,7 +62,7 @@ export class MarkdownConverter {
     return `${embedText}\n\n`;
   }
 
-  static textToMarkdown(text: string, markups: any[]): string {
+  private static textToMarkdown(text: string, markups: any[]): string {
     markups
       .slice()
       .reverse()
@@ -76,7 +76,7 @@ export class MarkdownConverter {
     return `${text}\n\n`;
   }
 
-  static codeToMarkdown(text: string, language: string = ''): string {
+  private static codeToMarkdown(text: string, language: string = ''): string {
     return '```' + language + '\n' + text + '\n```\n\n';
   }
 
