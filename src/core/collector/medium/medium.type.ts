@@ -31,13 +31,15 @@ interface MediumPostParagraph {
   metadata?: {
     id: string;
   };
-  markups: Array<{
-    type: string;
-    start: number;
-    end: number;
-    href?: string;
-    language?: string;
-  }>;
+  markups: MediumPostParagraphMarkup[];
 }
 
-export type { MediumGraphQLResponse, MediumPost, MediumPostParagraph };
+interface MediumPostParagraphMarkup {
+  type: string;
+  start: number;
+  end: number;
+  href?: string;
+  language?: string;
+}
+
+export type { MediumGraphQLResponse, MediumPost, MediumPostParagraph, MediumPostParagraphMarkup };

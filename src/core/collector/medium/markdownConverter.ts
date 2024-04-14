@@ -1,4 +1,4 @@
-import type { MediumPost, MediumPostParagraph } from './medium.type';
+import type { MediumPost, MediumPostParagraph, MediumPostParagraphMarkup } from './medium.type';
 
 export class MarkdownConverter {
   static convertToMarkdown(post: MediumPost): string {
@@ -49,7 +49,7 @@ export class MarkdownConverter {
     return id ? `![image](https://miro.medium.com/v2/resize:fit:1000/${id})\n\n` : '';
   }
 
-  private static embedToMarkdown(text: string, markups: any[]): string {
+  private static embedToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
     let embedText = text.replace(/\n/g, '');
     markups
       .slice()
@@ -62,7 +62,7 @@ export class MarkdownConverter {
     return `${embedText}\n\n`;
   }
 
-  private static textToMarkdown(text: string, markups: any[]): string {
+  private static textToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
     markups
       .slice()
       .reverse()
