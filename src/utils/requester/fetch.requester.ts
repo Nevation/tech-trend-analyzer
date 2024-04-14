@@ -1,7 +1,7 @@
 import { RequesterStrategy } from './requester.strategy';
 import { HttpRequestMethodType } from './requester.type';
 
-export class FetchRequester extends RequesterStrategy {
+export class FetchRequester<T = Response> extends RequesterStrategy<T> {
   constructor(
     private readonly url: string,
     private readonly headers: Record<string, string>,
@@ -10,15 +10,15 @@ export class FetchRequester extends RequesterStrategy {
     super();
   }
 
-  public async request(body?: object): Promise<Response> {
+  public async request(body?: object): Promise<T> {
     return fetch(this.url, {
       method: this.method,
       headers: this.headers,
       body: JSON.stringify(body),
-    });
+    }) as T;
   }
 
-  public async retry(body: object = {}, attempts: number, delay: number = 100): Promise<Response> {
+  public async retry(body: object = {}, attempts: number, delay: number = 100): Promise<T> {
     for (let trial = 0; trial < attempts; trial++) {
       try {
         return this.request(body);
@@ -29,7 +29,7 @@ export class FetchRequester extends RequesterStrategy {
     }
   }
 
-  public requestBulk(bodies?: object[]): Promise<Response[]> {
+  public requestBulk(bodies?: object[]): Promise<T[]> {
     const requests = bodies.map((body) => this.request(body));
     return Promise.all(requests);
   }
