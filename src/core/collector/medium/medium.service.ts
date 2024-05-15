@@ -5,24 +5,25 @@ import * as fs from 'fs';
 import type { MediumGraphQLResponse, MediumPost } from './medium.type';
 import { MarkdownConverter } from './markdownConverter';
 import { plainToInstance } from 'class-transformer';
-import { FetchRequester } from 'src/utils/requester/fetch.requester';
 import { Inject, Logger } from '@nestjs/common';
+import { Requester, RetryRequestStrategy } from 'src/utils/requester';
 
 export class CollectorMedium extends CollectorStrategy {
   private readonly queryFile = '/LegacyWebInlineTopicFeedQuery.gql';
-  private readonly requestUrl = 'https://medium.com/_/graphql';
   private readonly operationName = 'LegacyWebInlineTopicFeedQuery';
   private readonly tags = ['programming'];
   private readonly pageSize = 5; // NOTE: MAXIMUM 25, medium에서 제한함
   private readonly maxNum = 100;
   private readonly query: string;
 
-  private requester: FetchRequester;
+  private readonly requester: Requester;
+  private readonly requestUrl = 'https://medium.com/_/graphql';
+  private readonly requestHeader: Record<string, string>;
 
   constructor(@Inject('MarkdownConverter') private markdownConverter: MarkdownConverter) {
     super();
     this.query = this.loadGraphQLQuery();
-    const requestHeader = {
+    this.requestHeader = {
       accept: '*/*',
       'content-type': 'application/json',
       'graphql-operation': this.operationName,
@@ -30,7 +31,7 @@ export class CollectorMedium extends CollectorStrategy {
         'nonce=ZZxSZxXB; uid=de6e55174ae7; _ga=GA1.1.2007462361.1680482903; sid=1:H0cwoTVQTd6lwRXJ14edt5/xlo25eKQjpkVQv6ajMLct9z7+TjTFMcab7+jHEKtF; xsrf=6e705e0824e7; _ga_7JY7T788PK=GS1.1.1711074725.102.1.1711075467.0.0.0; _dd_s=rum=0&expire=1711076371261; dd_cookie_test_f138af8e-9a30-4a29-847e-b143fa745515=test; dd_cookie_test_3c1b88d9-ac52-4773-ab45-ab2df5dc8833=test; dd_cookie_test_f859b8c1-00dd-4efd-a7bf-eb5942862626=test',
       // Cookie: process.env['MEDIUM_COOKIE'],
     };
-    this.requester = new FetchRequester(this.requestUrl, requestHeader, 'POST');
+    this.requester = new Requester(new RetryRequestStrategy({ maxRetryCount: 100 }));
   }
 
   public async collectBlogPost(): Promise<CollectedPostResult> {
@@ -81,13 +82,8 @@ export class CollectorMedium extends CollectorStrategy {
   };
 
   private async fetchBlogPosts(body: object): Promise<MediumPost[]> {
-    const response = await this.requester.request(body);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.statusText}`);
-    }
-
-    const [{ data }] = (await response.json()) as Array<MediumGraphQLResponse>;
+    const response = await this.requester.post<MediumGraphQLResponse[]>(this.requestUrl, body, this.requestHeader);
+    const [{ data }] = response;
     return data.personalisedTagFeed.items.map(({ post }) => post);
   }
 
