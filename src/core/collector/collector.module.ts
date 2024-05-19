@@ -3,7 +3,8 @@ import { CollectorService } from './collector.service';
 import { CollectorMediumModule } from './medium/medium.module';
 
 @Module({
-  providers: [CollectorService, CollectorMediumModule],
+  imports: [CollectorMediumModule],
+  providers: [CollectorService],
   exports: [CollectorService],
 })
 export class CollectorModule {}

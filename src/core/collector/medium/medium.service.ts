@@ -6,7 +6,7 @@ import type { MediumGraphQLResponse, MediumPost } from './medium.type';
 import { MarkdownConverter } from './markdownConverter';
 import { plainToInstance } from 'class-transformer';
 import { Inject, Logger } from '@nestjs/common';
-import { Requester, RetryRequestStrategy } from 'src/utils/requester';
+import { Requester } from 'src/utils/requester';
 
 export class CollectorMedium extends CollectorStrategy {
   private readonly queryFile = '/LegacyWebInlineTopicFeedQuery.gql';
@@ -16,11 +16,13 @@ export class CollectorMedium extends CollectorStrategy {
   private readonly maxNum = 100;
   private readonly query: string;
 
-  private readonly requester: Requester;
   private readonly requestUrl = 'https://medium.com/_/graphql';
   private readonly requestHeader: Record<string, string>;
 
-  constructor(@Inject('MarkdownConverter') private markdownConverter: MarkdownConverter) {
+  constructor(
+    private readonly markdownConverter: MarkdownConverter,
+    @Inject('RETRY_REQUESTER') private readonly requester: Requester
+  ) {
     super();
     this.query = this.loadGraphQLQuery();
     this.requestHeader = {
@@ -31,7 +33,6 @@ export class CollectorMedium extends CollectorStrategy {
         'nonce=ZZxSZxXB; uid=de6e55174ae7; _ga=GA1.1.2007462361.1680482903; sid=1:H0cwoTVQTd6lwRXJ14edt5/xlo25eKQjpkVQv6ajMLct9z7+TjTFMcab7+jHEKtF; xsrf=6e705e0824e7; _ga_7JY7T788PK=GS1.1.1711074725.102.1.1711075467.0.0.0; _dd_s=rum=0&expire=1711076371261; dd_cookie_test_f138af8e-9a30-4a29-847e-b143fa745515=test; dd_cookie_test_3c1b88d9-ac52-4773-ab45-ab2df5dc8833=test; dd_cookie_test_f859b8c1-00dd-4efd-a7bf-eb5942862626=test',
       // Cookie: process.env['MEDIUM_COOKIE'],
     };
-    this.requester = new Requester(new RetryRequestStrategy({ maxRetryCount: 100 }));
   }
 
   public async collectBlogPost(): Promise<CollectedPostResult> {
