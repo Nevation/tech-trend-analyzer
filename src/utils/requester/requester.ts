@@ -34,7 +34,7 @@ export class Requester {
     return await this.request<T>(url, {
       method: 'DELETE',
       headers: {
-        'content-type': 'appplication/json',
+        'content-type': 'application/json',
         ...headers,
       },
       body: JSON.stringify(body),
