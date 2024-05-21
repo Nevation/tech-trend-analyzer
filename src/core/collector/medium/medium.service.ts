@@ -6,7 +6,7 @@ import type { MediumGraphQLResponse, MediumPost } from './medium.type';
 import { MarkdownConverter } from './markdownConverter';
 import { plainToInstance } from 'class-transformer';
 import { Inject, Logger } from '@nestjs/common';
-import { Requester } from 'src/utils/requester';
+import { Requester } from '../../../utils/requester';
 
 export class CollectorMedium extends CollectorStrategy {
   private readonly queryFile = '/LegacyWebInlineTopicFeedQuery.gql';
@@ -36,17 +36,17 @@ export class CollectorMedium extends CollectorStrategy {
   }
 
   public async collectBlogPost(): Promise<CollectedPostResult> {
-    const collectedPostList = [];
+    const collectedPostList: CollectedPost[] = [];
     const collectedAt = new Date().toISOString();
 
     try {
       for (const tag of this.tags) {
         for (let page = 0; page < this.maxNum; page += this.pageSize) {
           const body = this.makeResponseBody(tag, page, this.pageSize);
-
           const posts = await this.fetchBlogPosts(body);
           const collectedPosts = posts.map((post) => this.convertMediumPostToCollectedPost(post, collectedAt));
-          collectedPostList.push(collectedPosts);
+          collectedPostList.push(...collectedPosts);
+          if (posts.length < this.pageSize) break;
         }
       }
     } catch (error) {

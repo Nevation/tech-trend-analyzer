@@ -27,7 +27,7 @@ interface MediumPost {
 interface MediumPostParagraph {
   type: string;
   text: string;
-  language: string;
+  language?: string;
   metadata?: {
     id: string;
   };

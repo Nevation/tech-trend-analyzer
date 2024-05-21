@@ -14,7 +14,6 @@ export class MarkdownConverter {
       markdown += this.paragraphToMarkdown(paragraph);
     });
 
-    markdown += `---\n\n`;
     return markdown;
   }
 
@@ -25,7 +24,6 @@ export class MarkdownConverter {
       case 'H4':
         return `#### ${paragraph.text}\n\n`;
       case 'OLI':
-        // FIXME: 로직 수정 필요
         return `1. ${paragraph.text}\n`;
       case 'ULI':
         return `- ${paragraph.text}\n`;
@@ -48,7 +46,7 @@ export class MarkdownConverter {
   }
 
   private imageToMarkdown(id: string): string {
-    return id ? `![image](https://miro.medium.com/v2/resize:fit:1000/${id})\n\n` : '';
+    return `![image](https://miro.medium.com/v2/resize:fit:1000/${id})\n\n`;
   }
 
   private embedToMarkdown(text: string, markups: MediumPostParagraphMarkup[]): string {
