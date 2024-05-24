@@ -6,12 +6,6 @@ export class TransformedResult {
 }
 
 export class TransformedPost {
-  gptId: string;
   language: string;
-
-  score: number;
   postSummary: string;
-  postSummaryKor: string;
-
-  gptTags: string[];
 }

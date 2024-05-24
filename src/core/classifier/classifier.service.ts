@@ -4,7 +4,11 @@ import { TransformedResult } from '../transformer/transformer.type';
 
 @Injectable()
 export class ClassifierService {
-  public async classify(_: TransformedResult): Promise<ClassifierResult> {
-    throw new Error('Not implemented');
+  public async classify(transformedResult: TransformedResult): Promise<ClassifierResult> {
+    return {
+      transformData: transformedResult.transformData,
+      collectedData: transformedResult.collectedData,
+      classifierData: {},
+    };
   }
 }
