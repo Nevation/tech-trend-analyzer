@@ -12,7 +12,7 @@ export class Requester {
 
   public async get<T = any>(url: string, query?: Record<string, any>, headers?: Headers) {
     if (query === undefined) {
-      return await this.request(url, { headers });
+      return await this.request<T>(url, { headers });
     }
 
     const fullUrl = `${url}?${new URLSearchParams(query).toString()}`;
