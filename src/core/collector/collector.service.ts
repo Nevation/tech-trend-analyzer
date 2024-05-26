@@ -6,8 +6,8 @@ import { CollectorMedium } from './medium/medium.service';
 export class CollectorService {
   private readonly collectList: CollectorStrategy[];
 
-  constructor() {
-    this.collectList = [new CollectorMedium()];
+  constructor(private readonly collectorMedium: CollectorMedium) {
+    this.collectList = [this.collectorMedium];
   }
 
   public async collectPost() {
