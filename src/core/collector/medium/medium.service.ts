@@ -68,7 +68,7 @@ export class CollectorMedium extends CollectorStrategy {
   }
 
   private convertMediumPostToCollectedPost = (post: MediumPost, collectedAt: string) => {
-    Logger.debug(post.title);
+    Logger.debug(`${this.getProvidor()} ${post.title}`);
 
     return plainToInstance(CollectedPost, {
       postTitle: post.title,

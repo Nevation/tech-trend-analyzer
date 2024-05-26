@@ -3,6 +3,7 @@ import { CollectorMedium } from './medium.service';
 import { MarkdownConverter } from './markdownConverter';
 import { CollectedPostResult } from '../collector.type';
 import { MediumPost, MediumGraphQLResponse } from './medium.type';
+import { CollectProvidorMap } from '../collector.constant';
 
 class MockRequester {
   post = jest.fn();
@@ -82,7 +83,7 @@ describe('CollectorMedium', () => {
 
   describe('getProvidor', () => {
     it('should return provider name', () => {
-      expect(service.getProvidor()).toBe('MEDIUM');
+      expect(service.getProvidor()).toBe(CollectProvidorMap.medium);
     });
   });
 });
